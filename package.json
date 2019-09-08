@@ -12,6 +12,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "~8.2.4",
+    "@angular/cdk": "^8.1.4",
     "@angular/common": "~8.2.4",
     "@angular/compiler": "~8.2.4",
     "@angular/core": "~8.2.4",
@@ -19,7 +20,10 @@
     "@angular/platform-browser": "~8.2.4",
     "@angular/platform-browser-dynamic": "~8.2.4",
     "@angular/router": "~8.2.4",
+    "circom": "0.0.31",
+    "circomlib": "0.0.14",
     "rxjs": "~6.4.0",
+    "snarkjs": "^0.1.18",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },

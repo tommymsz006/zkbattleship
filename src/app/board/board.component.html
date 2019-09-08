@@ -1,0 +1,24 @@
+<h3>Battleship Board (Turn: {{turn}})</h3>
+<div class="game">
+	<table class="board">
+		<tbody>
+			<tr *ngFor="let rows of board; let y = index">
+				<td *ngFor="let cell of rows; let x = index">
+					<div class="cell-{{cell.state}}" (click)=onSelect(cell)>
+						<div class="prove" *ngIf="cell.validity === 2">⚠️</div> <!-- CellValidity.Proving -->
+						<div class="prove" *ngIf="cell.validity === 3">🔵</div> <!-- CellValidity.Verifying -->
+						<div class="prove" *ngIf="cell.validity === 4">✅</div> <!-- CellValidity.Verified -->
+						<div class="prove" *ngIf="cell.validity === 5">✖️</div> <!-- CellValidity.Invalid -->
+						<div *ngIf="getShipByCell(cell) as ship; let ship">
+							<div *ngIf="isDestroyedShipTypeEqual(ship, 'Carrier')">🛳️</div>
+							<div *ngIf="isDestroyedShipTypeEqual(ship, 'Battleship')">⛴️</div>
+							<div *ngIf="isDestroyedShipTypeEqual(ship, 'Cruiser')">🛥️</div>
+							<div *ngIf="isDestroyedShipTypeEqual(ship, 'Submarine')">🚤</div>
+							<div *ngIf="isDestroyedShipTypeEqual(ship, 'Destroyer')">🐉</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

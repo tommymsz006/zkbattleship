@@ -61,3 +61,13 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+
+// Add global to window, assigning the value of window itself.
+ // See https://github.com/angular/angular-cli/issues/8160
+(window as any).global = window;
+
+// fix "Uncaught ReferenceError: Buffer is not defined" error
+// See https://stackoverflow.com/questions/50371593/angular-6-uncaught-referenceerror-buffer-is-not-defined
+// @ts-ignore
+window.Buffer = window.Buffer || require('buffer').Buffer;

@@ -1,0 +1,54 @@
+<h3>Battleship Setup</h3>
+<button class="start" title="Start Game" (click)="startGame()" [disabled]="ships.length > 0">Start Game</button>
+<div class="game" cdkDropListGroup>
+	<table class="board">
+		<tbody>
+			<tr *ngFor="let rows of displayBoard; let y = index">
+				<td *ngFor="let cell of rows; let x = index">
+					<div cdkDropList
+						id="cell_{{x}}_{{y}}"
+						class="cell"
+						[cdkDropListData]="cell"
+						[cdkDropListEnterPredicate]="oneItemOnlyPredicate"
+						(cdkDropListDropped)="dropShip($event)">
+						<div class="ship-other" *ngIf="cell.length >= 1">
+							<div *ngIf="isShipTypeEqual(cell[0], 'Carrier')">🛳️</div>
+							<div *ngIf="isShipTypeEqual(cell[0], 'Battleship')">⛴️</div>
+							<div *ngIf="isShipTypeEqual(cell[0], 'Cruiser')">🛥️</div>
+							<div *ngIf="isShipTypeEqual(cell[0], 'Submarine')">🚤</div>
+							<div *ngIf="isShipTypeEqual(cell[0], 'Destroyer')">🐉</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div cdkDropList
+		id="fleet"
+		class="fleet"
+		[cdkDropListData]="ships"
+	    (cdkDropListDropped)="dropShip($event)">
+	    <div *ngFor="let ship of ships" cdkDrag>
+	    	<table (contextmenu)="changeOrientation(ship)">
+	    		<tr *ngFor="let v of verticalArray(ship); let j = index">
+		    		<td *ngFor="let h of horizontalArray(ship); let i = index">
+		    			<div class="ship-handle" *ngIf="i === 0 && j === 0" cdkDragHandle>
+							<div *ngIf="isShipTypeEqual(ship, 'Carrier')">🛳️</div>
+							<div *ngIf="isShipTypeEqual(ship, 'Battleship')">⛴️</div>
+							<div *ngIf="isShipTypeEqual(ship, 'Cruiser')">🛥️</div>
+							<div *ngIf="isShipTypeEqual(ship, 'Submarine')">🚤</div>
+							<div *ngIf="isShipTypeEqual(ship, 'Destroyer')">🐉</div>
+						</div>
+						<div class="ship-other" *ngIf="i !== 0 || j !== 0">
+							<div *ngIf="isShipTypeEqual(ship, 'Carrier')">🛳️</div>
+							<div *ngIf="isShipTypeEqual(ship, 'Battleship')">⛴️</div>
+							<div *ngIf="isShipTypeEqual(ship, 'Cruiser')">🛥️</div>
+							<div *ngIf="isShipTypeEqual(ship, 'Submarine')">🚤</div>
+							<div *ngIf="isShipTypeEqual(ship, 'Destroyer')">🐉</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+	    </div>
+	</div>
+</div>
