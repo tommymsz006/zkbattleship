@@ -25,6 +25,7 @@
     "rxjs": "~6.4.0",
     "snarkjs": "^0.1.18",
     "tslib": "^1.10.0",
+    "web3": "^1.2.1",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {

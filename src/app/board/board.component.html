@@ -21,4 +21,10 @@
 			</tr>
 		</tbody>
 	</table>
+	<form>
+		<label>Verification Method:<br>
+			<input type="radio" [(ngModel)]="verifyMethod" name="verifyMethod" value="JavaScript"/>JavaScript<br>
+			<input type="radio" [(ngModel)]="verifyMethod" name="verifyMethod" value="Web3"/>Web3: <input [(ngModel)]="contractAddress" name="contractAddress" placeholder="Contract Address" class="address"/><br>
+		</label>
+	</form>
 </div>

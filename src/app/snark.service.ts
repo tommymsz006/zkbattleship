@@ -1,8 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 
-import { Observable, fromEvent } from "rxjs";
+import { Observable, fromEvent, from } from "rxjs";
 import { map, tap } from 'rxjs/operators';
 
+import { WEB3_TOKEN } from './web3-token';
+import Web3 from 'web3';
+
+import { stringifyBigInts } from 'snarkjs';
 import { hash, generateProof, verifyProof } from './snark-helper';
 
 import { Ship, Carrier, Battleship, Cruiser, Submarine, Destroyer } from './ship';
@@ -20,11 +24,8 @@ import verificationKey from '../assets/snark/verification_key_groth.json';
   providedIn: 'root'
 })
 export class SnarkService {
+  // circuit
   private _shipHash;
-  private _proveWorker: Worker;
-  private _verifyWorker: Worker;
-  proofOutput$;
-  isValid$;
   input: {  carrierX: number; carrierY: number; carrierO: number;
             battleshipX: number; battleshipY: number; battleshipO: number;
             cruiserX: number; cruiserY: number; cruiserO: number;
@@ -32,7 +33,30 @@ export class SnarkService {
             destroyerX: number; destroyerY: number; destroyerO: number;
             shipHash?: string[]; targetX?: number; targetY?: number};
 
-  constructor() {
+  // workers
+  private _proveWorker: Worker;
+  private _verifyWorker: Worker;
+  proofOutput$;
+  isValid$;
+
+  // web3
+  private readonly _contract = new this.web3.eth.Contract(
+                              [{"constant": true,
+                                "inputs":
+                                 [ { "name": "a", type: "uint256[2]" },
+                                   { "name": "b", type: "uint256[2][2]" },
+                                   { "name": "c", type: "uint256[2]" },
+                                   { "name": "input", type: "uint256[5]" } ],
+                                "name": "verifyProof",
+                                "outputs": [ { "name": "r", "type": "bool" } ],
+                                "payable": false,
+                                "stateMutability": "view",
+                                "type": "function"}]);    // contract address
+  //isValidWeb3$;
+  defaultAccount;
+
+  constructor(@Inject(WEB3_TOKEN) private web3: Web3) {
+    // workers
     if (typeof Worker !== 'undefined') {
       // prove worker
       this._proveWorker = new Worker('./snark-prove.worker', { type: 'module' });
@@ -69,6 +93,15 @@ export class SnarkService {
     } else {
       // Web Workers are not supported in this environment.
       // You should add a fallback so that your program still executes correctly.
+    }
+
+    // initialize default account for web3
+    if (this.web3.eth.defaultAccount === undefined) {
+      this.web3.eth.getAccounts().then(accounts => {
+        if (accounts !== undefined && accounts.length >= 0) {
+          this.web3.eth.defaultAccount = accounts[0];
+        }
+      });
     }
   }
 
@@ -115,6 +148,31 @@ export class SnarkService {
 
   verify(proof, hitOrMissed: number, targetX: number, targetY: number) {
     this._verifyByWorker(proof, [hitOrMissed, this._shipHash[0], this._shipHash[1], targetX, targetY]);
+  }
+
+  verifyByWeb3(proof, hitOrMissed: number, targetX: number, targetY: number, contractAddress: string): Observable<any> {
+    let obs$: Observable<any>;
+    if (this.web3.eth.defaultAccount !== undefined) {
+      let proofStr = stringifyBigInts(proof);
+      let publicSignalsStr = stringifyBigInts([hitOrMissed, this._shipHash[0], this._shipHash[1], targetX, targetY]);
+      
+      this._contract.options.address = contractAddress;    // set contract address from input
+      obs$ = from(this._contract.methods.verifyProof( //["0x1a5477f1be6e0848a56b9096129d5c0059c827754139f09b75eb2c1c048c60f7", "0x2df79a9152778ad0ae06eadf28dae4202cf36cc1ba4970a06387610e74d7c67c"],[["0x07e1cd23f31fa80719aaaf206f702314a863aca1d5759bba488947eae30ebc67", "0x0e6eeec15da9b0ee6970bf16f3daacadf5d238dd5686c3ac0517e5f715f7470f"],["0x02066e719b0e65be000c653ad1cba15b8596cf3dce1feabe4729a1558ef5fa8c", "0x22d5103edb4d4f575be7d097053efdd2cadf6ea772dcbaf99ad79f077fd63919"]],["0x0d5402a0549ba4befa91b3e164c9f2cbd9f11aadb18c8218df7a62714181ac31", "0x2c65e9e3c3539b143fc514fb4c6eb313840aae96522fb3bec7aeecb520e0b7c7"],["0x0000000000000000000000000000000000000000000000000000000000000000","0x21fbaf5e2735c43501f8de4fcedb5594545a8a7708a51da7fdc0ebd866df2278","0x2a13595b64226e5f9e0e3e47c6fc1013d9daae87e5f560467e09e467033aee05","0x0000000000000000000000000000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000000000000000000000000000"]
+                                                      //).call({}));
+                                                      [proofStr.pi_a[0], proofStr.pi_a[1]],
+                                                      [[proofStr.pi_b[0][1], proofStr.pi_b[0][0]],
+                                                      [proofStr.pi_b[1][1], proofStr.pi_b[1][0]]],
+                                                      [proofStr.pi_c[0], proofStr.pi_c[1]],
+                                                      publicSignalsStr).call({})).pipe(
+                                                                    map(data => {
+                                                                      return {isValid: data,
+                                                                              targetX: targetX,
+                                                                              targetY: targetY};
+                                                                    })
+                                                                  );
+
+    }
+    return obs$;
   }
 
   private _constructInput(targetX: number, targetY: number) {

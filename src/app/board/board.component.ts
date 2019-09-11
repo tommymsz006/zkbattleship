@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CdkDrag, CdkDropList, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
@@ -18,7 +18,31 @@ import { Ship, ShipOrientation, ShipState } from '../ship';
 export class BoardComponent implements OnInit, OnDestroy {
   board: Cell[][];
   turn: number;
-  private sub: Subscription;
+  @Input() contractAddress: string;
+  @Input() verifyMethod: string = "JavaScript";
+  private readonly sub: Subscription = new Subscription();
+
+  // worker callbacks
+  private readonly _cbIsValid = data => {
+        console.log("isValid$");
+        console.log(data);
+        this.gameService.getCell(data.targetX, data.targetY).validate(data.isValid);
+        //TODO: check isValid value
+      }
+  private readonly _cbProofOutput = data => {
+        console.log("proofOutput$");
+        console.log(data);
+        console.log(this.gameService);
+        let hitOrMissed: CellState = (data.fireResult == 1) ? CellState.Hit : CellState.Missed;
+        // check if local hit/missed status is consistent with the circuit
+        if (this.gameService.getCell(data.targetX, data.targetY).verify(hitOrMissed)) {
+          if (this.verifyMethod === "JavaScript") {
+            this.snarkService.verify(data.proof, data.fireResult, data.targetX, data.targetY);
+          } else if (this.verifyMethod === "Web3") {
+            this.snarkService.verifyByWeb3(data.proof, data.fireResult, data.targetX, data.targetY, this.contractAddress).subscribe(this._cbIsValid);
+          }
+        }
+      };
 
   constructor(
     private gameService: GameService,
@@ -35,24 +59,8 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.snarkService.commitShips(this.gameService.getShips());
 
       // subscribe proving / verification observables
-      this.sub = new Subscription();
-      this.sub.add(this.snarkService.proofOutput$.subscribe(
-        data => {
-          console.log("proofOutput$");
-          console.log(data);
-          let hitOrMissed: CellState = (data.fireResult == 1) ? CellState.Hit : CellState.Missed;
-          // check if local hit/missed status is consistent with the circuit
-          if (this.gameService.getCell(data.targetX, data.targetY).verify(hitOrMissed)) {
-            this.snarkService.verify(data.proof, data.fireResult, data.targetX, data.targetY);
-          }
-        }));
-      this.sub.add(this.snarkService.isValid$.subscribe(
-        data => {
-          console.log("isValid$");
-          console.log(data);
-          this.gameService.getCell(data.targetX, data.targetY).validate(data.isValid);
-          //TODO: check isValid value
-        }));
+      this.sub.add(this.snarkService.proofOutput$.subscribe(this._cbProofOutput));
+      this.sub.add(this.snarkService.isValid$.subscribe(this._cbIsValid));
     }
     else {
       this.router.navigateByUrl('/setup');
