@@ -1,0 +1,8 @@
+<div *ngIf="logService.logBuffer.length">
+
+  <b>Status Console   </b><button (click)="logService.clear()">Clear All</button>
+  <div class="console">
+    <div *ngFor='let message of logService.logBuffer'> {{message}} </div>
+  </div>
+
+</div>

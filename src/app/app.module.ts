@@ -7,12 +7,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BoardComponent } from './board/board.component';
 import { SetupComponent } from './setup/setup.component';
+import { LogConsoleComponent } from './log-console/log-console.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BoardComponent,
-    SetupComponent
+    SetupComponent,
+    LogConsoleComponent
   ],
   imports: [
     BrowserModule,
