@@ -32,10 +32,7 @@ export function hash(input : { carrierX: number; carrierY: number; carrierO: num
 // }
 
 export function verifyProof(data) {
-  let response = {isValid: false};
-  response.isValid = groth.isValid(
-                        unstringifyBigInts(data.verificationKey),
+  return groth.isValid( unstringifyBigInts(data.verificationKey),
                         unstringifyBigInts(data.proof),
                         unstringifyBigInts(data.publicSignals));
-  return response;
 }
