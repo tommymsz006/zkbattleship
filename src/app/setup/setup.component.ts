@@ -6,6 +6,7 @@ import { Cell } from '../cell';
 import { Ship, ShipOrientation } from '../ship';
 
 import { GameService } from '../game.service';
+import { LogService } from '../log.service';
 
 @Component({
   selector: 'app-setup',
@@ -18,6 +19,7 @@ export class SetupComponent implements OnInit {
 
   constructor(
     private gameService: GameService,
+    private logService : LogService,
     private router: Router
   ) { }
 
@@ -36,6 +38,8 @@ export class SetupComponent implements OnInit {
   			this.displayBoard[i][j] = [];
   		}
     }
+
+    this.logService.addMessage("Game setup completed!");
   }
 
   dropShip(event: CdkDragDrop<Ship[]>) {
