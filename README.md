@@ -1,27 +1,69 @@
-# Battleship
+# zkbattleship
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.2.
+[![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
 
-## Development server
+`zkbattleship` is a prototype [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)) game built on zkSNARKs proof and verification. Battleship game requires the players to be honest in reporting whether the hits from enemies successfully damaged the battleships or not. zkSNARKs proof enables solid verification without revealing enemies' battleship deployment.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+It features the use of [Angular 8](https://angular.io) for web frontend, [web3.js](https://web3js.readthedocs.io) for smart contract interaction and [snarkjs](https://github.com/iden3/snarkjs) for zkSNARKs proof and verification.
 
-## Code scaffolding
+See also [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit) for the underlying arithmetic circuit implementation used in zkSNARKs.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Prerequisite
+
+No prior package installation is required, as it can be built via npm commands and operated via [Angular CLI](https://github.com/angular/angular-cli). For Angular CLI in particular, see more in the article [Setting up the local environment and workspace](https://angular.io/guide/setup-local) at Angular website.
+
+The verification of battleship deployment needs a Web3-compatible provider/wallet, such as [Metamask](https://metamask.io). This allows the web client to interact with the verifier smart contract.
+
+The verifier smart contract generated from [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit) can be deployed in local Ethereum blockchain (e.g. [ganache-cli](https://github.com/trufflesuite/ganache-cli)) or testnet (e.g. [Kovan](https://kovan-testnet.github.io/website/)). See more at [Contract Deployment](https://github.com/tommymsz006/zkbattleship-circuit#contract-deployment).
+
+## Structure
+
+The structure of this project follows standard Angular project.
+
+* `src/app` includes majority of the code around [components](https://angular.io/guide/architecture-components) and [services](https://angular.io/guide/architecture-services).
+* `src/assets` contains the necessary objects used by `snarkjs` for zkSNARKs proof.
+* `docs` has the materials used by this README.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+1. Git-clone the content to local storage and build via npm:
 
-## Running unit tests
+```bash
+npm install
+```
+2. In `node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js`, replace
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```javascript
+node: false
+```
 
-## Running end-to-end tests
+by
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+```javascript
+node: {crypto: true, stream: true}
+```
 
-## Further help
+to ensure that web3.js works with Angular. See more technical details at [here](https://github.com/ethereum/web3.js/issues/1555).
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+3. Compile code and start an interactive local development server:
+
+```bash
+ng serve
+```
+
+## Run
+
+Once the local development server is up using `ng serve`, access [http://localhost:4200](http://localhost:4200).
+
+![zkbattleship interface](docs/zkbattleship1.png)
+
+Here are some instructions for running through the game features:
+
+1. place 5 battleships (Carrier 🛳️, Battleship ⛴️, Cruiser 🛥️, Submarine 🚤 and Destroyer 🐉) on the battlefield from the fleet;
+2. right-click the battleships in the fleet to rotate;
+3. press 'Start Game' button to start guessing where the battleships are deployed with zero-knowledge proof;
+4. choose between JavaScript and Web3 for verification; for Web3
+   * enter contract address of the verifier (i.e. `verifier.sol` in [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit))
+5. pick the tile in each turn to observe whether it hits the hidden battleships
+   * red is a hit, amber is a miss;
+   * further zkSNARKs verification will take place; the state is indicated by Generating Proof (⏳), Verifying (🔵), Verified-Valid (✅) and Verified-Invalid (✖️)
