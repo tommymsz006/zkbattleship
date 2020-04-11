@@ -55,8 +55,6 @@ ng serve
 
 Once the local development server is up using `ng serve`, access [http://localhost:4200](http://localhost:4200).
 
-![zkbattleship interface](docs/zkbattleship1.png)
-
 Here are some instructions for running through the game features:
 
 1. place 5 battleships (Carrier 🛳️, Battleship ⛴️, Cruiser 🛥️, Submarine 🚤 and Destroyer 🐉) on the battlefield from the fleet;
@@ -67,3 +65,5 @@ Here are some instructions for running through the game features:
 5. pick the tile in each turn to observe whether it hits the hidden battleships
    * red is a hit, amber is a miss;
    * further zkSNARKs verification will take place; the state is indicated by Generating Proof (⏳), Verifying (🔵), Verified-Valid (✅) and Verified-Invalid (✖️)
+
+![zkbattleship interface](docs/zkbattleship1.png)
