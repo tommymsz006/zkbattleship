@@ -91,8 +91,8 @@ export class SnarkService {
                           })
                         );
     } else {
-      // Web Workers are not supported in this environment.
-      // You should add a fallback so that your program still executes correctly.
+      // callback for web worker unavailability
+      console.log("Web worker does not work in this environment.");
     }
 
     // initialize default account for web3

@@ -47,7 +47,7 @@ export class BoardComponent implements OnInit, OnDestroy {
           }
         }
         else {
-          this.logService.addMessage(`[${data.targetX}, ${data.targetY}]: result failed to be locally verified`);
+          this.logService.addMessage(`[${data.targetX}, ${data.targetY}]: result failed to match local storage`);
         }
       };
 
@@ -69,6 +69,10 @@ export class BoardComponent implements OnInit, OnDestroy {
       // subscribe proving / verification observables
       this.sub.add(this.snarkService.proofOutput$.subscribe(this._cbProofOutput));
       this.sub.add(this.snarkService.isValid$.subscribe(this._cbIsValid));
+
+      this.logService.addMessage("You may pick any tile on the screen to fire. Red and yellow mean it has hit and missed respectively.");
+      this.logService.addMessage("The result will then be further verified by either local JavaScript (snarkjs), or a smart contract with a designated address via Web3.");
+      this.logService.addMessage("The states include Generating Proof (⏳), Verifying (🔵), Verified-Valid (✅) and Verified-Invalid (✖️).");
     }
     else {
       this.router.navigateByUrl('/setup');

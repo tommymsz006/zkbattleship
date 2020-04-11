@@ -5,7 +5,6 @@ export function generateProof(data) {
   // calculate witness and generate proof
   const circuit: Circuit = new Circuit(data.circuit);
   const witness = circuit.calculateWitness(data.allInput);
-  //console.log(witness);
   return groth.genProof(unstringifyBigInts(data.provingKey), witness);    // Groth 16
 }
 

@@ -40,6 +40,9 @@ export class SetupComponent implements OnInit {
     }
 
     this.logService.addMessage("Game setup completed!");
+    this.logService.addMessage("This site aims to demostrate the use of zero-knowledge proof and verification with snarkjs implentation and circom-built arithmetic circuits in Angular/Web3 environment.");
+    this.logService.addMessage("The 5 battleships available in the fleet are Carrier (🛳️, 5-tile), Battleship (⛴️, 4-tile), Cruiser (🛥️, 3-tile), Submarine (🚤, 3-tile) and Destroyer (🐉, 2-tile).");
+    this.logService.addMessage("Instruction: 1) place 5 battleships on the battlefield; 2) right-click the battleships in the fleet to rotate; 3) press 'Start Game' button to start guessing where the battleships are deployed with zero-knowledge proof.");
   }
 
   dropShip(event: CdkDragDrop<Ship[]>) {
