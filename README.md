@@ -8,11 +8,17 @@ It features the use of [Angular 8](https://angular.io) for web frontend, [web3.j
 
 See also [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit) for the underlying arithmetic circuit implementation used in zkSNARKs.
 
+## Give It a Try
+
+It's currently deployed in Github pages of this repository at (please try with Chrome and MetaMask):
+
+[https://tommymsz006.github.io/zkbattleship/](https://tommymsz006.github.io/zkbattleship/)
+
 ## Prerequisite
 
 No prior package installation is required, as it can be built via npm commands and operated via [Angular CLI](https://github.com/angular/angular-cli). For Angular CLI in particular, see more in the article [Setting up the local environment and workspace](https://angular.io/guide/setup-local) at Angular website.
 
-The verification of battleship deployment needs a Web3-compatible provider/wallet, such as [Metamask](https://metamask.io). This allows the web client to interact with the verifier smart contract.
+The verification of battleship deployment needs a Web3-compatible provider/wallet, such as [MetaMask](https://metamask.io). This allows the web client to interact with the verifier smart contract.
 
 The zkSNARKs proving and verification rely on the [circom](https://github.com/iden3/circom) circuits generated from [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit). Do go through the steps in [here](https://github.com/tommymsz006/zkbattleship-circuit#build) to build.
 
