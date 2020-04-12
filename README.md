@@ -14,7 +14,9 @@ No prior package installation is required, as it can be built via npm commands a
 
 The verification of battleship deployment needs a Web3-compatible provider/wallet, such as [Metamask](https://metamask.io). This allows the web client to interact with the verifier smart contract.
 
-The verifier smart contract generated from [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit) can be deployed in local Ethereum blockchain (e.g. [ganache-cli](https://github.com/trufflesuite/ganache-cli)) or testnet (e.g. [Kovan](https://kovan-testnet.github.io/website/)). See more at [Contract Deployment](https://github.com/tommymsz006/zkbattleship-circuit#contract-deployment).
+The zkSNARKs proving and verification rely on the [circom](https://github.com/iden3/circom) circuits generated from [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit). Do go through the steps in [here](https://github.com/tommymsz006/zkbattleship-circuit#build) to build.
+
+Optionally, the web client can perform on-chain verification via Web3 in form of smart contract. The verifier smart contract can be generated from [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit) and deployed in local Ethereum blockchain (e.g. [ganache-cli](https://github.com/trufflesuite/ganache-cli)) or testnet (e.g. [Kovan](https://kovan-testnet.github.io/website/)). See more at [Contract Deployment](https://github.com/tommymsz006/zkbattleship-circuit#contract-deployment).
 
 ## Structure
 
@@ -26,12 +28,12 @@ The structure of this project follows standard Angular project.
 
 ## Build
 
-1. Git-clone the content to local storage and build via npm:
+1. git-clone the content to local storage and build via npm:
 
 ```bash
 npm install
 ```
-2. In `node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js`, replace
+2. in `node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js`, replace
 
 ```javascript
 node: false
@@ -45,7 +47,17 @@ node: {crypto: true, stream: true}
 
 to ensure that web3.js works with Angular. See more technical details at [here](https://github.com/ethereum/web3.js/issues/1555).
 
-3. Compile code and start an interactive local development server:
+3. copy 3 files, namely the underlying circom circuit `circuit.json`, proving key `proving_key.json` and verification key `verification_key.json`, generated circom circuits in [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit) (note: not ZoKrates) to `src/assets` and `src/assets/snark` folders respectively:
+
+```bash
+mkdir -p src/assets/snark
+
+cp ../zkbattleship-circuit/circom/circuit.json src/assets
+cp ../zkbattleship-circuit/circom/proving_key.json src/assets/snark/proving_key_groth.json	# note: file renamed
+cp ../zkbattleship-circuit/circom/verification_key.json src/assets/snark/verification_key_groth.json	# note: file renamed
+```
+
+4. compile code and start an interactive local development server:
 
 ```bash
 ng serve
@@ -65,5 +77,7 @@ Here are some instructions for running through the game features:
 5. pick the tile in each turn to observe whether it hits the hidden battleships
    * red is a hit, amber is a miss;
    * further zkSNARKs verification will take place; the state is indicated by Generating Proof (⏳), Verifying (🔵), Verified-Valid (✅) and Verified-Invalid (✖️)
+
+Happy proving and verification!
 
 ![zkbattleship interface](docs/zkbattleship1.png)
