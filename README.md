@@ -6,6 +6,8 @@
 
 It features the use of [Angular 8](https://angular.io) for web frontend, [web3.js](https://web3js.readthedocs.io) for smart contract interaction and [snarkjs](https://github.com/iden3/snarkjs) for zkSNARKs proof and verification.
 
+The article [zk-Battleship: a Use Case Combining snarkjs, web3 and Angular](https://medium.com/@tommy.msz006/zk-battleship-a-use-case-combining-snarkjs-web3-and-angular-f015b7781766?sk=4fea844d220cafe720df692307c0deac) provides a further explanation and sharing about the content in this repository.
+
 See also [zkbattleship-circuit](https://github.com/tommymsz006/zkbattleship-circuit) for the underlying arithmetic circuit implementation used in zkSNARKs.
 
 ## Give It a Try
